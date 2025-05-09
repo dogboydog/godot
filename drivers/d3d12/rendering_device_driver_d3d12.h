@@ -40,38 +40,16 @@
 #define __REQUIRED_RPCNDR_H_VERSION__ 475
 #endif
 
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
-#pragma GCC diagnostic ignored "-Wshadow"
-#pragma GCC diagnostic ignored "-Wswitch"
-#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-#elif defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnon-virtual-dtor"
-#pragma clang diagnostic ignored "-Wstring-plus-int"
-#pragma clang diagnostic ignored "-Wswitch"
-#pragma clang diagnostic ignored "-Wmissing-field-initializers"
-#pragma clang diagnostic ignored "-Wimplicit-fallthrough"
-#endif
-
-#include "d3dx12.h"
+#include <d3dx12.h>
 #include <dxgi1_6.h>
 #define D3D12MA_D3D12_HEADERS_ALREADY_INCLUDED
-#include "D3D12MemAlloc.h"
+#include <D3D12MemAlloc.h>
 
 #include <wrl/client.h>
 
 #if defined(_MSC_VER) && defined(MemoryBarrier)
 // Annoying define from winnt.h. Reintroduced by some of the headers above.
 #undef MemoryBarrier
-#endif
-
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic pop
-#elif defined(__clang__)
-#pragma clang diagnostic pop
 #endif
 
 using Microsoft::WRL::ComPtr;
@@ -297,6 +275,9 @@ private:
 
 		UINT mapped_subresource = UINT_MAX;
 		SelfList<TextureInfo> pending_clear{ this };
+#ifdef DEBUG_ENABLED
+		bool created_from_extension = false;
+#endif
 	};
 	SelfList<TextureInfo>::List textures_pending_clear;
 
@@ -316,7 +297,7 @@ protected:
 
 public:
 	virtual TextureID texture_create(const TextureFormat &p_format, const TextureView &p_view) override final;
-	virtual TextureID texture_create_from_extension(uint64_t p_native_texture, TextureType p_type, DataFormat p_format, uint32_t p_array_layers, bool p_depth_stencil) override final;
+	virtual TextureID texture_create_from_extension(uint64_t p_native_texture, TextureType p_type, DataFormat p_format, uint32_t p_array_layers, bool p_depth_stencil, uint32_t p_mipmaps) override final;
 	virtual TextureID texture_create_shared(TextureID p_original_texture, const TextureView &p_view) override final;
 	virtual TextureID texture_create_shared_from_slice(TextureID p_original_texture, const TextureView &p_view, TextureSliceType p_slice_type, uint32_t p_layer, uint32_t p_layers, uint32_t p_mipmap, uint32_t p_mipmaps) override final;
 	virtual void texture_free(TextureID p_texture) override final;

@@ -320,6 +320,9 @@ void EditorResourcePicker::_edit_menu_cbk(int p_which) {
 			List<String> extensions;
 			for (int i = 0; i < base_type.get_slice_count(","); i++) {
 				String base = base_type.get_slicec(',', i);
+				if (base == "Resource") {
+					base = "";
+				}
 				ResourceLoader::get_recognized_extensions_for_type(base, &extensions);
 				if (ScriptServer::is_global_class(base)) {
 					ResourceLoader::get_recognized_extensions_for_type(ScriptServer::get_global_class_native_base(base), &extensions);
@@ -398,6 +401,7 @@ void EditorResourcePicker::_edit_menu_cbk(int p_which) {
 				vb->add_child(label);
 
 				duplicate_resources_tree = memnew(Tree);
+				duplicate_resources_tree->set_accessibility_name(TTRC("Duplicate resources"));
 				duplicate_resources_tree->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 				vb->add_child(duplicate_resources_tree);
 				duplicate_resources_tree->set_columns(2);
@@ -607,8 +611,8 @@ static void _add_allowed_type(const StringName &p_type, List<StringName> *p_vect
 			p_vector->push_back(p_type);
 		}
 
-		List<StringName> inheriters;
-		ClassDB::get_inheriters_from_class(p_type, &inheriters);
+		LocalVector<StringName> inheriters;
+		ClassDB::get_inheriters_from_class(p_type, inheriters);
 		for (const StringName &S : inheriters) {
 			_add_allowed_type(S, p_vector);
 		}
@@ -1103,6 +1107,7 @@ EditorResourcePicker::EditorResourcePicker(bool p_hide_assign_button_controls) {
 	assign_button = memnew(Button);
 	assign_button->set_flat(true);
 	assign_button->set_h_size_flags(SIZE_EXPAND_FILL);
+	assign_button->set_accessibility_name(TTRC("Assign Resource"));
 	assign_button->set_expand_icon(true);
 	assign_button->set_clip_text(true);
 	assign_button->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
@@ -1127,8 +1132,9 @@ EditorResourcePicker::EditorResourcePicker(bool p_hide_assign_button_controls) {
 	edit_button->set_flat(false);
 	edit_button->set_toggle_mode(true);
 	edit_button->set_action_mode(BaseButton::ACTION_MODE_BUTTON_PRESS);
-	edit_button->connect(SceneStringName(pressed), callable_mp(this, &EditorResourcePicker::_update_menu));
+	edit_button->set_accessibility_name(TTRC("Edit"));
 	add_child(edit_button);
+	edit_button->connect(SceneStringName(pressed), callable_mp(this, &EditorResourcePicker::_update_menu));
 	edit_button->connect(SceneStringName(gui_input), callable_mp(this, &EditorResourcePicker::_button_input));
 
 	add_theme_constant_override("separation", 0);

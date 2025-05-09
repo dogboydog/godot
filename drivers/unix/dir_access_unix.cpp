@@ -37,16 +37,15 @@
 #include "core/string/print_string.h"
 #include "core/templates/list.h"
 
-#include <errno.h>
 #include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/statvfs.h>
+#include <cerrno>
+#include <cstdio>
+#include <cstdlib>
 
-#ifdef HAVE_MNTENT
+#if __has_include(<mntent.h>)
 #include <mntent.h>
 #endif
 
@@ -192,7 +191,7 @@ void DirAccessUnix::list_dir_end() {
 	_cisdir = false;
 }
 
-#if defined(HAVE_MNTENT) && defined(LINUXBSD_ENABLED)
+#if __has_include(<mntent.h>) && defined(LINUXBSD_ENABLED)
 static bool _filter_drive(struct mntent *mnt) {
 	// Ignore devices that don't point to /dev
 	if (strncmp(mnt->mnt_fsname, "/dev", 4) != 0) {
@@ -216,7 +215,7 @@ static void _get_drives(List<String> *list) {
 	// Add root.
 	list->push_back("/");
 
-#if defined(HAVE_MNTENT) && defined(LINUXBSD_ENABLED)
+#if __has_include(<mntent.h>) && defined(LINUXBSD_ENABLED)
 	// Check /etc/mtab for the list of mounted partitions.
 	FILE *mtab = setmntent("/etc/mtab", "r");
 	if (mtab) {
@@ -257,7 +256,7 @@ static void _get_drives(List<String> *list) {
 				// Parse only file:// links
 				if (strncmp(string, "file://", 7) == 0) {
 					// Strip any unwanted edges on the strings and push_back if it's not a duplicate.
-					String fpath = String::utf8(string + 7).strip_edges().split_spaces()[0].uri_decode();
+					String fpath = String::utf8(string + 7).strip_edges().split_spaces()[0].uri_file_decode();
 					if (!list->find(fpath)) {
 						list->push_back(fpath);
 					}

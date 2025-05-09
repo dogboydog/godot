@@ -127,6 +127,13 @@ void VideoStreamPlayer::_mix_audio() {
 
 void VideoStreamPlayer::_notification(int p_notification) {
 	switch (p_notification) {
+		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
+			RID ae = get_accessibility_element();
+			ERR_FAIL_COND(ae.is_null());
+
+			DisplayServer::get_singleton()->accessibility_update_set_role(ae, DisplayServer::AccessibilityRole::ROLE_VIDEO);
+		} break;
+
 		case NOTIFICATION_ENTER_TREE: {
 			AudioServer::get_singleton()->add_mix_callback(_mix_audios, this);
 
@@ -571,8 +578,6 @@ void VideoStreamPlayer::_bind_methods() {
 
 	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "bus", PROPERTY_HINT_ENUM, ""), "set_bus", "get_bus");
 }
-
-VideoStreamPlayer::VideoStreamPlayer() {}
 
 VideoStreamPlayer::~VideoStreamPlayer() {
 	resampler.clear(); // Not necessary here, but make in consistent with other "stream_player" classes.

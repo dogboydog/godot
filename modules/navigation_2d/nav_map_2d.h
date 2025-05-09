@@ -50,7 +50,7 @@ class NavObstacle2D;
 class NavMap2D : public NavRid2D {
 	/// To find the polygons edges the vertices are displaced in a grid where
 	/// each cell has the following cell_size.
-	real_t cell_size = NavigationDefaults2D::navmesh_cell_size;
+	real_t cell_size = NavigationDefaults2D::NAV_MESH_CELL_SIZE;
 
 	// For the inter-region merging to work, internal rasterization is performed.
 	Vector2 merge_rasterizer_cell_size = Vector2(cell_size, cell_size);
@@ -60,10 +60,10 @@ class NavMap2D : public NavRid2D {
 
 	bool use_edge_connections = true;
 	/// This value is used to detect the near edges to connect.
-	real_t edge_connection_margin = NavigationDefaults2D::edge_connection_margin;
+	real_t edge_connection_margin = NavigationDefaults2D::EDGE_CONNECTION_MARGIN;
 
 	/// This value is used to limit how far links search to find polygons to connect to.
-	real_t link_connection_radius = NavigationDefaults2D::link_connection_radius;
+	real_t link_connection_radius = NavigationDefaults2D::LINK_CONNECTION_RADIUS;
 
 	bool map_settings_dirty = true;
 
@@ -90,9 +90,6 @@ class NavMap2D : public NavRid2D {
 
 	/// Are rvo obstacles modified?
 	bool obstacles_dirty = true;
-
-	/// Physics delta time.
-	real_t deltatime = 0.0;
 
 	/// Change the id each time the map is updated.
 	uint32_t iteration_id = 0;
@@ -203,7 +200,7 @@ public:
 	Vector2 get_random_point(uint32_t p_navigation_layers, bool p_uniformly) const;
 
 	void sync();
-	void step(real_t p_deltatime);
+	void step(double p_delta_time);
 	void dispatch_callbacks();
 
 	// Performance Monitor

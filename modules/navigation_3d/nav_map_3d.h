@@ -55,8 +55,8 @@ class NavMap3D : public NavRid3D {
 
 	/// To find the polygons edges the vertices are displaced in a grid where
 	/// each cell has the following cell_size and cell_height.
-	real_t cell_size = NavigationDefaults3D::navmesh_cell_size;
-	real_t cell_height = NavigationDefaults3D::navmesh_cell_height;
+	real_t cell_size = NavigationDefaults3D::NAV_MESH_CELL_SIZE;
+	real_t cell_height = NavigationDefaults3D::NAV_MESH_CELL_HEIGHT;
 
 	// For the inter-region merging to work, internal rasterization is performed.
 	Vector3 merge_rasterizer_cell_size = Vector3(cell_size, cell_height, cell_size);
@@ -66,10 +66,10 @@ class NavMap3D : public NavRid3D {
 
 	bool use_edge_connections = true;
 	/// This value is used to detect the near edges to connect.
-	real_t edge_connection_margin = NavigationDefaults3D::edge_connection_margin;
+	real_t edge_connection_margin = NavigationDefaults3D::EDGE_CONNECTION_MARGIN;
 
 	/// This value is used to limit how far links search to find polygons to connect to.
-	real_t link_connection_radius = NavigationDefaults3D::link_connection_radius;
+	real_t link_connection_radius = NavigationDefaults3D::LINK_CONNECTION_RADIUS;
 
 	bool map_settings_dirty = true;
 
@@ -98,9 +98,6 @@ class NavMap3D : public NavRid3D {
 
 	/// Are rvo obstacles modified?
 	bool obstacles_dirty = true;
-
-	/// Physics delta time
-	real_t deltatime = 0.0;
 
 	/// Change the id each time the map is updated.
 	uint32_t iteration_id = 0;
@@ -221,7 +218,7 @@ public:
 	Vector3 get_random_point(uint32_t p_navigation_layers, bool p_uniformly) const;
 
 	void sync();
-	void step(real_t p_deltatime);
+	void step(double p_delta_time);
 	void dispatch_callbacks();
 
 	// Performance Monitor
